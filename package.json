@@ -1,0 +1,45 @@
+{
+  "name": "node_tui",
+  "version": "0.0.1",
+  "description": "Package for creating Terminal User Interfaces",
+  "main": "mod.js",
+  "type": "module",
+  "exports": {
+    ".": "./"
+  },
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Im-Beast/node_tui.git"
+  },
+  "keywords": [
+    "typescript",
+    "tui",
+    "console",
+    "terminal",
+    "ts",
+    "js",
+    "node",
+    "deno"
+  ],
+  "author": "Im-Beast",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Im-Beast/node_tui/issues"
+  },
+  "homepage": "https://github.com/Im-Beast/node_tui#readme",
+  "devDependencies": {
+    "crayon.js": "^3.3.3"
+  },
+  "dependencies": {
+    "@deno/shim-deno": "^0.16.1",
+    "@types/node": "^20.5.6"
+  }
+}
