@@ -12,8 +12,6 @@ import { DrawObject } from "./draw_object.ts";
 import { Signal, SignalOfObject } from "../signals/mod.ts";
 import { signalify } from "../utils/signals.ts";
 
-const textEncoder = new TextEncoder();
-
 /** Interface defining object that {Canvas}'s constructor can interpret */
 export interface CanvasOptions {
   /** Stdout to which canvas will render frameBuffer */
@@ -190,8 +188,8 @@ export class Canvas extends EventEmitter<CanvasEventMap> {
 
         // This is required to render properly on windows
         if (drawSequence.length + cell.length > 1024) {
-          stdout.writeSync(
-            textEncoder.encode(moveCursor(lastRow, lastColumn) + drawSequence),
+          stdout.write(
+            moveCursor(lastRow, lastColumn) + drawSequence,
           );
           drawSequence = moveCursor(row, column);
         }
@@ -206,8 +204,8 @@ export class Canvas extends EventEmitter<CanvasEventMap> {
     }
 
     // Complete final loop draw sequence
-    stdout.writeSync(
-      textEncoder.encode(moveCursor(lastRow, lastColumn) + drawSequence),
+    stdout.write(
+      moveCursor(lastRow, lastColumn) + drawSequence,
     );
 
     this.emit("render");

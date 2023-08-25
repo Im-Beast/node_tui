@@ -1,5 +1,7 @@
 // Copyright 2023 Im-Beast. All rights reserved. MIT license.
 
+// TODO: migrate tests to something cool
+
 import { EventEmitter } from "../src/event_emitter.ts";
 import { assertEquals } from "./deps.ts";
 

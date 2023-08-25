@@ -8,8 +8,6 @@ import {
 } from "./utils/component.ts";
 import { fitsInRectangle } from "./utils/numbers.ts";
 
-const textEncoder = new TextEncoder();
-
 let lastSelectedComponent: Component;
 
 /**
@@ -76,12 +74,12 @@ export function handleKeyboardControls(tui: Tui): void {
           (vectorY === -1 && rectangle.row < lastRectangle.row) ||
           vectorY === 0
         )
-      )
+      ) {
         continue;
+      }
 
-      const distance =
-        ((lastRectangle.column - rectangle.column) ** 2 +
-          (lastRectangle.row - rectangle.row) ** 2) **
+      const distance = ((lastRectangle.column - rectangle.column) ** 2 +
+        (lastRectangle.row - rectangle.row) ** 2) **
         0.5;
 
       if (
@@ -108,10 +106,11 @@ export function handleKeyboardControls(tui: Tui): void {
  * Enable handling of controlling Tui using mouse
  */
 export function handleMouseControls(tui: Tui): void {
-  const { rid } = tui.stdout;
-  Deno.writeSync(rid, textEncoder.encode(ENABLE_MOUSE));
+  const { stdout } = tui;
+
+  stdout.write(ENABLE_MOUSE);
   tui.on("destroy", () => {
-    Deno.writeSync(rid, textEncoder.encode(DISABLE_MOUSE));
+    stdout.write(DISABLE_MOUSE);
   });
 
   tui.on("mousePress", ({ x, y, drag, shift, meta, ctrl, release }) => {

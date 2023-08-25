@@ -13,18 +13,7 @@ import {
   USE_SECONDARY_BUFFER,
 } from "./utils/ansi_codes.ts";
 
-import { Deno } from "@deno/shim-deno";
-
-Deno.consoleSize = function () {
-  return {
-    columns: process.stdout.columns,
-    rows: process.stdout.rows,
-  };
-};
-
-globalThis.Deno = Deno;
-
-const textEncoder = new TextEncoder();
+import { consoleSize } from "./utils/terminal.ts";
 
 export interface TuiOptions {
   style?: Style;
@@ -65,18 +54,17 @@ export class Tui extends EventEmitter<
   drawnObjects: { background?: BoxObject };
   refreshRate: number;
 
-  #nextUpdateTimeout?: number;
+  #nextUpdateTimeout?: NodeJS.Timeout;
 
   constructor(options: TuiOptions) {
     super();
-    this.stdin = options.stdin ?? Deno.stdin;
-    this.stdout = options.stdout ?? Deno.stdout;
+    this.stdin = options.stdin ?? process.stdin;
+    this.stdout = options.stdout ?? process.stdout;
     this.refreshRate = options.refreshRate ?? 1000 / 60;
-    this.canvas =
-      options.canvas ??
+    this.canvas = options.canvas ??
       new Canvas({
         stdout: this.stdout,
-        size: Deno.consoleSize(),
+        size: consoleSize(),
       });
 
     this.style = options.style;
@@ -95,7 +83,7 @@ export class Tui extends EventEmitter<
 
     const updateCanvasSize = () => {
       const { canvas } = this;
-      const { columns, rows } = Deno.consoleSize();
+      const { columns, rows } = consoleSize();
 
       const size = canvas.size.peek();
 
@@ -107,11 +95,9 @@ export class Tui extends EventEmitter<
 
     updateCanvasSize();
 
-    if (Deno.build.os === "windows") {
-      setInterval(updateCanvasSize, this.refreshRate);
-    } else {
-      Deno.addSignalListener("SIGWINCH", updateCanvasSize);
-    }
+    process.on("SIGWINCH", () => {
+      updateCanvasSize();
+    });
   }
 
   addChild(child: Component): void {
@@ -141,10 +127,7 @@ export class Tui extends EventEmitter<
       box.draw();
     }
 
-    Deno.writeSync(
-      stdout.rid,
-      textEncoder.encode(USE_SECONDARY_BUFFER + HIDE_CURSOR),
-    );
+    stdout.write(USE_SECONDARY_BUFFER + HIDE_CURSOR);
 
     const updateStep = () => {
       canvas.render();
@@ -158,16 +141,8 @@ export class Tui extends EventEmitter<
 
     clearTimeout(this.#nextUpdateTimeout);
 
-    try {
-      this.stdin.setRaw(false);
-    } catch {
-      /**/
-    }
-
-    Deno.writeSync(
-      this.stdout.rid,
-      textEncoder.encode(USE_PRIMARY_BUFFER + SHOW_CURSOR),
-    );
+    this.stdin.setRawMode(false);
+    this.stdout.write(USE_PRIMARY_BUFFER + SHOW_CURSOR);
 
     for (const component of this.components) {
       component.destroy();
@@ -179,22 +154,21 @@ export class Tui extends EventEmitter<
       this.emit("destroy");
     };
 
-    if (Deno.build.os === "windows") {
-      Deno.addSignalListener("SIGBREAK", destroyDispatcher);
+    process.on("SIGBREAK", destroyDispatcher);
+    process.on("SIGTERM", destroyDispatcher);
+    process.on("SIGINT", destroyDispatcher);
+    process.on("exit", destroyDispatcher);
 
+    if (process.platform === "win32") {
       this.on("keyPress", ({ key, ctrl }) => {
         if (ctrl && key === "c") destroyDispatcher();
       });
-    } else {
-      Deno.addSignalListener("SIGTERM", destroyDispatcher);
     }
-
-    Deno.addSignalListener("SIGINT", destroyDispatcher);
 
     this.on("destroy", async () => {
       this.destroy();
       await Promise.resolve();
-      Deno.exit(0);
+      process.exit(0);
     });
   }
 }
