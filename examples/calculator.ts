@@ -1,7 +1,7 @@
 // Copyright 2023 Im-Beast. All rights reserved. MIT license.
 // Simple calculator demo using grid layout
 
-import { crayon } from "https://deno.land/x/crayon@3.3.3/mod.ts";
+import { crayon } from "crayon.js";
 
 import { Tui } from "../src/tui.ts";
 import { handleInput } from "../src/input.ts";
@@ -42,8 +42,7 @@ const layout = new GridLayout({
 type ElementName = (typeof layout)["elementNameToIndex"] extends Map<
   infer K,
   unknown
->
-  ? K
+> ? K
   : never;
 
 const buttons: Record<ElementName, Button> = {} as Record<ElementName, Button>;
