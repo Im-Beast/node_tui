@@ -8,6 +8,17 @@ import { Style } from "./theme.ts";
 import { Rectangle, Stdin, Stdout } from "./types.ts";
 import { HIDE_CURSOR, SHOW_CURSOR, USE_PRIMARY_BUFFER, USE_SECONDARY_BUFFER } from "./utils/ansi_codes.ts";
 
+import { Deno } from "@deno/shim-deno";
+
+Deno.consoleSize = function () {
+  return {
+    columns: process.stdout.columns,
+    rows: process.stdout.rows,
+  };
+};
+
+globalThis.Deno = Deno;
+
 const textEncoder = new TextEncoder();
 
 export interface TuiOptions {

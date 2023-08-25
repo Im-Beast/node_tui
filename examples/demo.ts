@@ -1,6 +1,5 @@
 // Copyright 2023 Im-Beast. All rights reserved. MIT license.
 import { crayon } from "crayon.js";
-import "@deno/shim-deno";
 
 import { Tui } from "../src/tui.ts";
 import { handleInput } from "../src/input.ts";
