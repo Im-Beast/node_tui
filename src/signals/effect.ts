@@ -1,5 +1,8 @@
 // Copyright 2023 Im-Beast. All rights reserved. MIT license.
-import { optimizeDependencies, trackDependencies } from "./dependency_tracking.ts";
+import {
+  optimizeDependencies,
+  trackDependencies,
+} from "./dependency_tracking.ts";
 import type { Dependant, Dependency } from "./types.ts";
 
 /** Function that's ran every time `Effect.update` is called */

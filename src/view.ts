@@ -15,7 +15,11 @@ export class View {
 
   constructor(options: ViewOptions) {
     this.rectangle = signalify(options.rectangle, { deepObserve: true });
-    this.offset = signalify(options.offset ?? { columns: 0, rows: 0 }, { deepObserve: true });
-    this.maxOffset = signalify(options.maxOffset ?? { columns: 0, rows: 0 }, { deepObserve: true });
+    this.offset = signalify(options.offset ?? { columns: 0, rows: 0 }, {
+      deepObserve: true,
+    });
+    this.maxOffset = signalify(options.maxOffset ?? { columns: 0, rows: 0 }, {
+      deepObserve: true,
+    });
   }
 }

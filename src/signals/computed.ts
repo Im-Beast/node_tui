@@ -7,7 +7,9 @@ import { activeSignals, trackDependencies } from "./dependency_tracking.ts";
 /** Thrown whenever someone tries to directly modify `Computed.value` */
 export class ComputedReadOnlyError extends Error {
   constructor() {
-    super("Computed is read-only, you can't (and shouldn't!) directly modify its value");
+    super(
+      "Computed is read-only, you can't (and shouldn't!) directly modify its value",
+    );
   }
 }
 
@@ -70,7 +72,10 @@ export class Computed<T> extends Signal<T> implements Dependant, Dependency {
   update(cause: Dependency | Dependant): void {
     activeSignals?.add(this);
 
-    if (this.$value !== (this.$value = this.computable(cause)) || this.forceUpdateValue) {
+    if (
+      this.$value !== (this.$value = this.computable(cause)) ||
+      this.forceUpdateValue
+    ) {
       this.propagate(cause);
     }
   }

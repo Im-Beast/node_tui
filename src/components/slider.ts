@@ -101,22 +101,31 @@ export class Slider extends Box {
       }
     });
 
-    this.on("mousePress", ({ drag, movementX, movementY, ctrl, shift, meta }) => {
-      if (!drag || ctrl || shift || meta) return;
+    this.on(
+      "mousePress",
+      ({ drag, movementX, movementY, ctrl, shift, meta }) => {
+        if (!drag || ctrl || shift || meta) return;
 
-      const { min, max, step, value, orientation } = this;
+        const { min, max, step, value, orientation } = this;
 
-      value.value = clamp(
-        value.peek() + (orientation.peek() === "horizontal" ? movementX : movementY) * step.peek(),
-        min.peek(),
-        max.peek(),
-      );
-    });
+        value.value = clamp(
+          value.peek() +
+            (orientation.peek() === "horizontal" ? movementX : movementY) *
+              step.peek(),
+          min.peek(),
+          max.peek(),
+        );
+      },
+    );
 
     this.on("mouseScroll", ({ scroll }) => {
       const { min, max, step, value } = this;
 
-      this.value.value = clamp(value.peek() + scroll * step.peek(), min.peek(), max.peek());
+      this.value.value = clamp(
+        value.peek() + scroll * step.peek(),
+        min.peek(),
+        max.peek(),
+      );
     });
   }
 
@@ -139,7 +148,9 @@ export class Slider extends Box {
         const normalizedValue = normalize(value, min, max);
 
         if (horizontal) {
-          const thumbSize = this.adjustThumbSize.value ? Math.round((width) / (max - min)) : 1;
+          const thumbSize = this.adjustThumbSize.value
+            ? Math.round(width / (max - min))
+            : 1;
 
           thumbRectangle.column = Math.min(
             column + width - thumbSize,
@@ -149,7 +160,9 @@ export class Slider extends Box {
           thumbRectangle.width = thumbSize;
           thumbRectangle.height = height;
         } else {
-          const thumbSize = this.adjustThumbSize.value ? Math.round((height) / (max - min)) : 1;
+          const thumbSize = this.adjustThumbSize.value
+            ? Math.round(height / (max - min))
+            : 1;
 
           thumbRectangle.column = column;
           thumbRectangle.row = Math.min(
@@ -172,8 +185,10 @@ export class Slider extends Box {
     super.interact(method);
     const interactionInterval = Date.now() - this.lastInteraction.time;
 
-    this.state.value = this.state.peek() === "focused" && (interactionInterval < 500 || method === "keyboard")
-      ? "active"
-      : "focused";
+    this.state.value =
+      this.state.peek() === "focused" &&
+      (interactionInterval < 500 || method === "keyboard")
+        ? "active"
+        : "focused";
   }
 }

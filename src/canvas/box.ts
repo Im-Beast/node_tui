@@ -65,7 +65,10 @@ export class BoxObject extends DrawObject<"box"> {
     const viewRectangle = this.view.peek()?.rectangle?.peek();
     if (viewRectangle) {
       rowRange = Math.min(rowRange, viewRectangle.row + viewRectangle.height);
-      columnRange = Math.min(columnRange, viewRectangle.column + viewRectangle.width);
+      columnRange = Math.min(
+        columnRange,
+        viewRectangle.column + viewRectangle.width,
+      );
     }
 
     for (let row = rectangle.row; row < rerenderCells.length; ++row) {
@@ -81,11 +84,15 @@ export class BoxObject extends DrawObject<"box"> {
         continue;
       }
 
-      const rowBuffer = frameBuffer[row] ??= [];
-      const rerenderQueueRow = rerenderQueue[row] ??= new Set();
+      const rowBuffer = (frameBuffer[row] ??= []);
+      const rerenderQueueRow = (rerenderQueue[row] ??= new Set());
 
       for (const column of rerenderColumns) {
-        if (omitColumns?.has(column) || column < rectangle.column || column >= columnRange) {
+        if (
+          omitColumns?.has(column) ||
+          column < rectangle.column ||
+          column >= columnRange
+        ) {
           continue;
         }
 

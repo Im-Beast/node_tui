@@ -6,7 +6,12 @@ import { InputEventRecord } from "./input_reader/mod.ts";
 import { Computed, Signal } from "./signals/mod.ts";
 import { Style } from "./theme.ts";
 import { Rectangle, Stdin, Stdout } from "./types.ts";
-import { HIDE_CURSOR, SHOW_CURSOR, USE_PRIMARY_BUFFER, USE_SECONDARY_BUFFER } from "./utils/ansi_codes.ts";
+import {
+  HIDE_CURSOR,
+  SHOW_CURSOR,
+  USE_PRIMARY_BUFFER,
+  USE_SECONDARY_BUFFER,
+} from "./utils/ansi_codes.ts";
 
 import { Deno } from "@deno/shim-deno";
 
@@ -67,10 +72,12 @@ export class Tui extends EventEmitter<
     this.stdin = options.stdin ?? Deno.stdin;
     this.stdout = options.stdout ?? Deno.stdout;
     this.refreshRate = options.refreshRate ?? 1000 / 60;
-    this.canvas = options.canvas ?? new Canvas({
-      stdout: this.stdout,
-      size: Deno.consoleSize(),
-    });
+    this.canvas =
+      options.canvas ??
+      new Canvas({
+        stdout: this.stdout,
+        size: Deno.consoleSize(),
+      });
 
     this.style = options.style;
 
@@ -134,7 +141,10 @@ export class Tui extends EventEmitter<
       box.draw();
     }
 
-    Deno.writeSync(stdout.rid, textEncoder.encode(USE_SECONDARY_BUFFER + HIDE_CURSOR));
+    Deno.writeSync(
+      stdout.rid,
+      textEncoder.encode(USE_SECONDARY_BUFFER + HIDE_CURSOR),
+    );
 
     const updateStep = () => {
       canvas.render();
@@ -150,9 +160,14 @@ export class Tui extends EventEmitter<
 
     try {
       this.stdin.setRaw(false);
-    } catch { /**/ }
+    } catch {
+      /**/
+    }
 
-    Deno.writeSync(this.stdout.rid, textEncoder.encode(USE_PRIMARY_BUFFER + SHOW_CURSOR));
+    Deno.writeSync(
+      this.stdout.rid,
+      textEncoder.encode(USE_PRIMARY_BUFFER + SHOW_CURSOR),
+    );
 
     for (const component of this.components) {
       component.destroy();

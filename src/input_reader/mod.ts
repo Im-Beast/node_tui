@@ -1,6 +1,11 @@
 // Copyright 2023 Im-Beast. All rights reserved. MIT license.
 
-import type { KeyPressEvent, MouseEvent, MousePressEvent, MouseScrollEvent } from "./types.ts";
+import type {
+  KeyPressEvent,
+  MouseEvent,
+  MousePressEvent,
+  MouseScrollEvent,
+} from "./types.ts";
 import type { Stdin } from "../types.ts";
 import { decodeMouseSGR, decodeMouseVT_UTF8 } from "./decoders/mouse.ts";
 import { decodeKey } from "./decoders/keyboard.ts";
@@ -59,7 +64,11 @@ const textDecoder = new TextDecoder();
  */
 export function* decodeBuffer(
   buffer: Uint8Array,
-): Generator<KeyPressEvent | MouseEvent | MousePressEvent | MouseScrollEvent, void, void> {
+): Generator<
+  KeyPressEvent | MouseEvent | MousePressEvent | MouseScrollEvent,
+  void,
+  void
+> {
   const code = textDecoder.decode(buffer);
   const lastIndex = code.lastIndexOf("\x1b");
 
@@ -67,6 +76,8 @@ export function* decodeBuffer(
     yield* decodeBuffer(buffer.subarray(0, lastIndex));
     yield* decodeBuffer(buffer.subarray(lastIndex));
   } else {
-    yield decodeMouseVT_UTF8(buffer, code) ?? decodeMouseSGR(buffer, code) ?? decodeKey(buffer, code);
+    yield decodeMouseVT_UTF8(buffer, code) ??
+      decodeMouseSGR(buffer, code) ??
+      decodeKey(buffer, code);
   }
 }

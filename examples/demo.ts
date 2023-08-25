@@ -3,7 +3,10 @@ import { crayon } from "crayon.js";
 
 import { Tui } from "../src/tui.ts";
 import { handleInput } from "../src/input.ts";
-import { handleKeyboardControls, handleMouseControls } from "../src/controls.ts";
+import {
+  handleKeyboardControls,
+  handleMouseControls,
+} from "../src/controls.ts";
 
 import { Box } from "../src/components/box.ts";
 import { Text } from "../src/components/text.ts";
@@ -330,10 +333,7 @@ new Table({
     row: 11,
     height: 8,
   },
-  headers: [
-    { title: "ID" },
-    { title: "Name" },
-  ],
+  headers: [{ title: "ID" }, { title: "Name" }],
   data: [
     ["0", "Thomas Jeronimo"],
     ["1", "Jeremy Wanker"],
@@ -371,7 +371,12 @@ const viewBackground = new Box({
 // @ts-ignore-
 viewBackground.NOFRAME = true;
 
-const viewScrollbarRectangle: Rectangle = { column: 0, row: 0, width: 1, height: 0 };
+const viewScrollbarRectangle: Rectangle = {
+  column: 0,
+  row: 0,
+  width: 1,
+  height: 0,
+};
 const viewScrollbar = new Slider({
   parent: tui,
   min: 0,
@@ -382,7 +387,8 @@ const viewScrollbar = new Slider({
   adjustThumbSize: true,
   rectangle: new Computed(() => {
     const viewRectangle = view.rectangle.value;
-    viewScrollbarRectangle.column = viewRectangle.column + viewRectangle.width - 1;
+    viewScrollbarRectangle.column =
+      viewRectangle.column + viewRectangle.width - 1;
     viewScrollbarRectangle.row = viewRectangle.row;
     viewScrollbarRectangle.height = viewRectangle.height;
     return viewScrollbarRectangle;
@@ -463,38 +469,44 @@ new Text({
 });
 
 // Generate frames and labels for every component
-tui.canvas.on("render", () => {
-  const components: Component[] = [];
-  const tuiStyleTheme = { base: tui.style };
+tui.canvas.on(
+  "render",
+  () => {
+    const components: Component[] = [];
+    const tuiStyleTheme = { base: tui.style };
 
-  for (const component of tui.components) {
-    if (
-      // @ts-expect-error NOFRAME
-      component.view.peek() || component.parent !== tui || component.NOFRAME ||
-      component === performanceStats
-    ) {
-      continue;
+    for (const component of tui.components) {
+      if (
+        // @ts-expect-error NOFRAME
+        component.view.peek() ||
+        component.parent !== tui ||
+        component.NOFRAME ||
+        component === performanceStats
+      ) {
+        continue;
+      }
+
+      components.push(
+        new Frame({
+          parent: tui,
+          rectangle: component.rectangle,
+          visible: true,
+          charMap: "rounded",
+          theme: tuiStyleTheme,
+          zIndex: component.zIndex,
+        }),
+      );
     }
 
-    components.push(
-      new Frame({
-        parent: tui,
-        rectangle: component.rectangle,
-        visible: true,
-        charMap: "rounded",
-        theme: tuiStyleTheme,
-        zIndex: component.zIndex,
-      }),
-    );
-  }
-
-  tui.on("keyPress", ({ ctrl, meta, shift, key }) => {
-    if (!ctrl || key !== "f" || meta || shift) return;
-    for (const component of components) {
-      component.visible.value = !component.visible.value;
-    }
-  });
-}, true);
+    tui.on("keyPress", ({ ctrl, meta, shift, key }) => {
+      if (!ctrl || key !== "f" || meta || shift) return;
+      for (const component of components) {
+        component.visible.value = !component.visible.value;
+      }
+    });
+  },
+  true,
+);
 
 const fps = new Signal(60);
 let lastRender = 0;
@@ -503,13 +515,14 @@ const performanceStats = new Text({
   parent: tui,
   rectangle: { column: 0, row: 0 },
   theme: baseTheme,
-  text: new Computed(() =>
-    `\
+  text: new Computed(
+    () =>
+      `\
 FPS: ${fps.value.toFixed(2)}\
  | Components: ${tui.components.size}\
  | Drawn objects: ${tui.canvas.drawnObjects.length}\
  | Updated objects: ${tui.canvas.rerenderedObjects}\
- | Press CTRL+F to toggle Frame/Label visibility`
+ | Press CTRL+F to toggle Frame/Label visibility`,
   ),
   zIndex: 0,
 });

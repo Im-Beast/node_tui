@@ -35,7 +35,7 @@ export const TableUnicodeCharacters = {
 };
 
 export type TableUnicodeCharactersType = {
-  [key in keyof typeof TableUnicodeCharacters["rounded"]]: string;
+  [key in keyof (typeof TableUnicodeCharacters)["rounded"]]: string;
 };
 
 export interface TableTheme extends Theme {
@@ -127,10 +127,14 @@ export class Table extends Component {
 
     this.data = signalify(options.data, { deepObserve: true });
     this.charMap = signalify(
-      typeof options.charMap === "string" ? TableUnicodeCharacters[options.charMap] : options.charMap,
+      typeof options.charMap === "string"
+        ? TableUnicodeCharacters[options.charMap]
+        : options.charMap,
       { deepObserve: true },
     );
-    this.headers = signalify(options.headers as TableHeader<true>[], { deepObserve: true });
+    this.headers = signalify(options.headers as TableHeader<true>[], {
+      deepObserve: true,
+    });
     this.selectedRow = new Signal(0);
     this.offsetRow = new Signal(0);
 
@@ -188,7 +192,11 @@ export class Table extends Component {
       }
 
       selectedRow.value = clamp(selectedRow.peek(), 0, lastDataRow - 1);
-      offsetRow.value = clamp(selectedRow.peek() - ~~((height - 4) / 2), 0, lastDataRow - height + 5);
+      offsetRow.value = clamp(
+        selectedRow.peek() - ~~((height - 4) / 2),
+        0,
+        lastDataRow - height + 5,
+      );
     });
 
     this.on("mouseEvent", (mouseEvent) => {
@@ -199,8 +207,16 @@ export class Table extends Component {
       const lastDataRow = this.data.peek().length - 1;
 
       if ("scroll" in mouseEvent) {
-        this.offsetRow.value = clamp(this.offsetRow.peek() + mouseEvent.scroll, 0, lastDataRow - height + 5);
-      } else if ("button" in mouseEvent && y >= row + 3 && y <= row + height - 2) {
+        this.offsetRow.value = clamp(
+          this.offsetRow.peek() + mouseEvent.scroll,
+          0,
+          lastDataRow - height + 5,
+        );
+      } else if (
+        "button" in mouseEvent &&
+        y >= row + 3 &&
+        y <= row + height - 2
+      ) {
         const dataRow = y - row + this.offsetRow.peek() - 3;
         if (dataRow !== clamp(dataRow, 0, lastDataRow)) return;
         this.selectedRow.value = dataRow;
@@ -235,7 +251,9 @@ export class Table extends Component {
         let value = "";
 
         for (const header of headers) {
-          value += header.title + " ".repeat(header.width + 1 - textWidth(header.title));
+          value +=
+            header.title +
+            " ".repeat(header.width + 1 - textWidth(header.title));
         }
 
         return value;
@@ -250,7 +268,9 @@ export class Table extends Component {
     this.#fillDataDrawObjects();
 
     // Drawing frame
-    const frameStyleSignal = new Computed(() => this.theme.frame[this.state.value]);
+    const frameStyleSignal = new Computed(
+      () => this.theme.frame[this.state.value],
+    );
 
     const topRectangle = { column: 0, row: 0 };
     const top = new TextObject({
@@ -266,7 +286,9 @@ export class Table extends Component {
       }),
       value: new Computed(() => {
         const { topLeft, horizontal, topRight } = this.charMap.value;
-        return topLeft + horizontal.repeat(this.rectangle.value.width - 2) + topRight;
+        return (
+          topLeft + horizontal.repeat(this.rectangle.value.width - 2) + topRight
+        );
       }),
     });
 
@@ -284,11 +306,17 @@ export class Table extends Component {
       }),
       value: new Computed(() => {
         const { bottomLeft, horizontal, bottomRight } = this.charMap.value;
-        return bottomLeft + horizontal.repeat(this.rectangle.value.width - 2) + bottomRight;
+        return (
+          bottomLeft +
+          horizontal.repeat(this.rectangle.value.width - 2) +
+          bottomRight
+        );
       }),
     });
 
-    const verticalCharMapSignal = new Computed(() => this.charMap.value.vertical);
+    const verticalCharMapSignal = new Computed(
+      () => this.charMap.value.vertical,
+    );
 
     const leftRectangle = { column: 0, row: 0, width: 1, height: 0 };
     const left = new BoxObject({
@@ -334,8 +362,13 @@ export class Table extends Component {
         return middleRectangle;
       }),
       value: new Computed(() => {
-        const { leftHorizontal, horizontal, rightHorizontal } = this.charMap.value;
-        return leftHorizontal + horizontal.repeat(this.rectangle.value.width - 2) + rightHorizontal;
+        const { leftHorizontal, horizontal, rightHorizontal } =
+          this.charMap.value;
+        return (
+          leftHorizontal +
+          horizontal.repeat(this.rectangle.value.width - 2) +
+          rightHorizontal
+        );
       }),
     });
 
@@ -351,9 +384,11 @@ export class Table extends Component {
   interact(method: "mouse" | "keyboard"): void {
     const interactionInterval = Date.now() - this.lastInteraction.time;
 
-    this.state.value = this.state.peek() === "focused" && (interactionInterval < 500 || method === "keyboard")
-      ? "active"
-      : "focused";
+    this.state.value =
+      this.state.peek() === "focused" &&
+      (interactionInterval < 500 || method === "keyboard")
+        ? "active"
+        : "focused";
 
     super.interact(method);
   }
@@ -362,7 +397,11 @@ export class Table extends Component {
     const { canvas } = this.tui;
     const { drawnObjects } = this;
 
-    for (let i = drawnObjects.data.length; i < this.rectangle.peek().height - 4; ++i) {
+    for (
+      let i = drawnObjects.data.length;
+      i < this.rectangle.peek().height - 4;
+      ++i
+    ) {
       const textRectangle = { column: 0, row: 0 };
       const text = new TextObject({
         canvas,
@@ -373,7 +412,7 @@ export class Table extends Component {
           const selectedRow = this.selectedRow.value;
           const selectedRowStyle = this.theme.selectedRow[this.state.value];
           const style = this.style.value;
-          return (i + offsetRow) === selectedRow ? selectedRowStyle : style;
+          return i + offsetRow === selectedRow ? selectedRowStyle : style;
         }),
         value: new Computed(() => {
           const dataRow = this.data.value[i + this.offsetRow.value];
@@ -382,12 +421,17 @@ export class Table extends Component {
           let string = "";
           let prevData = "";
           for (const [j, dataCell] of dataRow.entries()) {
-            if (j !== 0) string += " ".repeat(headers[j - 1].width - textWidth(prevData) + 1);
+            if (j !== 0)
+              string += " ".repeat(
+                headers[j - 1].width - textWidth(prevData) + 1,
+              );
             string += dataCell;
             prevData = dataCell;
           }
 
-          string += " ".repeat(this.rectangle.value.width - textWidth(string) - 2);
+          string += " ".repeat(
+            this.rectangle.value.width - textWidth(string) - 2,
+          );
           return string;
         }),
         rectangle: new Computed(() => {
@@ -404,7 +448,9 @@ export class Table extends Component {
   }
 
   #popUnusedDataDrawObjects(): void {
-    for (const dataCell of this.drawnObjects.data.splice(this.data.value.length)) {
+    for (const dataCell of this.drawnObjects.data.splice(
+      this.data.value.length,
+    )) {
       dataCell.erase();
     }
   }

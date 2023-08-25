@@ -2,7 +2,10 @@
 import { Component } from "./component.ts";
 import { Tui } from "./tui.ts";
 import { DISABLE_MOUSE, ENABLE_MOUSE } from "./utils/ansi_codes.ts";
-import { getComponentClosestToTopLeftCorner, isInteractable } from "./utils/component.ts";
+import {
+  getComponentClosestToTopLeftCorner,
+  isInteractable,
+} from "./utils/component.ts";
 import { fitsInRectangle } from "./utils/numbers.ts";
 
 const textEncoder = new TextEncoder();
@@ -67,21 +70,26 @@ export function handleKeyboardControls(tui: Tui): void {
           (vectorX === 1 && rectangle.column > lastRectangle.column) ||
           (vectorX === -1 && rectangle.column < lastRectangle.column) ||
           vectorX === 0
-        ) || !(
+        ) ||
+        !(
           (vectorY === 1 && rectangle.row > lastRectangle.row) ||
           (vectorY === -1 && rectangle.row < lastRectangle.row) ||
           vectorY === 0
         )
-      ) continue;
+      )
+        continue;
 
-      const distance = (
-        (lastRectangle.column - rectangle.column) ** 2 +
-        (lastRectangle.row - rectangle.row) ** 2
-      ) ** 0.5;
+      const distance =
+        ((lastRectangle.column - rectangle.column) ** 2 +
+          (lastRectangle.row - rectangle.row) ** 2) **
+        0.5;
 
       if (
-        !bestCandidateDistance || distance < bestCandidateDistance ||
-        (bestCandidate && distance <= bestCandidateDistance && component.zIndex > bestCandidate.zIndex)
+        !bestCandidateDistance ||
+        distance < bestCandidateDistance ||
+        (bestCandidate &&
+          distance <= bestCandidateDistance &&
+          component.zIndex > bestCandidate.zIndex)
       ) {
         bestCandidate = component;
         bestCandidateDistance = distance;

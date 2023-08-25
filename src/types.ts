@@ -32,21 +32,27 @@ export interface Rectangle {
 }
 
 /** Generates number types that range from {From} to {To}  */
-export type Range<From extends number, To extends number> = number extends From ? number
+export type Range<From extends number, To extends number> = number extends From
+  ? number
   : _Range<From, To, []>;
-type _Range<From extends number, To extends number, R extends unknown[]> = R["length"] extends To ? To
+type _Range<
+  From extends number,
+  To extends number,
+  R extends unknown[],
+> = R["length"] extends To
+  ? To
   :
-    | (R["length"] extends Range<0, From> ? From : R["length"])
-    | _Range<From, To, [To, ...R]>;
+      | (R["length"] extends Range<0, From> ? From : R["length"])
+      | _Range<From, To, [To, ...R]>;
 
 /** Partial that makes all properties optional, even those within other object properties */
-export type DeepPartial<Object, OmitKeys extends keyof Object = never> =
-  & {
-    [key in Exclude<keyof Object, OmitKeys>]?: Object[key] extends object
-      // deno-lint-ignore ban-types
-      ? Object[key] extends Function ? Object[key] : DeepPartial<Object[key]>
-      : Object[key];
-  }
-  & {
-    [key in OmitKeys]: DeepPartial<Object[key]>;
-  };
+export type DeepPartial<Object, OmitKeys extends keyof Object = never> = {
+  [key in Exclude<keyof Object, OmitKeys>]?: Object[key] extends object
+    ? // deno-lint-ignore ban-types
+      Object[key] extends Function
+      ? Object[key]
+      : DeepPartial<Object[key]>
+    : Object[key];
+} & {
+  [key in OmitKeys]: DeepPartial<Object[key]>;
+};

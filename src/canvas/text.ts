@@ -2,7 +2,11 @@
 import { DrawObject, DrawObjectOptions } from "./draw_object.ts";
 
 import { textWidth, UNICODE_CHAR_REGEXP } from "../utils/strings.ts";
-import { fitsInRectangle, rectangleEquals, rectangleIntersection } from "../utils/numbers.ts";
+import {
+  fitsInRectangle,
+  rectangleEquals,
+  rectangleIntersection,
+} from "../utils/numbers.ts";
 import { Effect, Signal, SignalOfObject } from "../signals/mod.ts";
 import { Rectangle } from "../types.ts";
 import { signalify } from "../utils/signals.ts";
@@ -42,7 +46,9 @@ export class TextObject extends DrawObject<"text"> {
     this.text = signalify(options.value);
     this.rectangle = signalify(options.rectangle as Rectangle);
     this.overwriteRectangle = signalify(options.overwriteRectangle ?? false);
-    this.multiCodePointSupport = signalify(options.multiCodePointSupport ?? false);
+    this.multiCodePointSupport = signalify(
+      options.multiCodePointSupport ?? false,
+    );
     this.valueChars = this.multiCodePointSupport.value
       ? this.text.value.match(UNICODE_CHAR_REGEXP) ?? ""
       : this.text.value;
@@ -70,16 +76,22 @@ export class TextObject extends DrawObject<"text"> {
       }
 
       const { valueChars: previousValueChars } = this;
-      const valueChars: string | string[] = this.valueChars = multiCodePointSupport
-        ? text.match(UNICODE_CHAR_REGEXP) ?? []
-        : text;
+      const valueChars: string | string[] = (this.valueChars =
+        multiCodePointSupport ? text.match(UNICODE_CHAR_REGEXP) ?? [] : text);
 
       const { row, column, width } = rectangle;
       const barrier = overwriteRectangle
-        ? (width < previousValueChars.length ? width : -1)
-        : (valueChars.length < previousValueChars.length ? valueChars.length : -1);
+        ? width < previousValueChars.length
+          ? width
+          : -1
+        : valueChars.length < previousValueChars.length
+        ? valueChars.length
+        : -1;
 
-      const columnRange = Math.max(valueChars.length, previousValueChars.length);
+      const columnRange = Math.max(
+        valueChars.length,
+        previousValueChars.length,
+      );
 
       if (barrier !== -1) {
         for (let c = 0; c < columnRange; ++c) {
@@ -148,13 +160,23 @@ export class TextObject extends DrawObject<"text"> {
     const rectangle = this.rectangle.peek();
 
     // Rerender cells that changed because objects position changed
-    if (!previousRectangle || rectangleEquals(rectangle, previousRectangle)) return;
+    if (!previousRectangle || rectangleEquals(rectangle, previousRectangle))
+      return;
 
-    const intersection = rectangleIntersection(rectangle, previousRectangle, true);
+    const intersection = rectangleIntersection(
+      rectangle,
+      previousRectangle,
+      true,
+    );
 
     const previousRow = previousRectangle.row;
-    const previousColumnRange = previousRectangle.column + previousRectangle.width;
-    for (let column = previousRectangle.column; column < previousColumnRange; ++column) {
+    const previousColumnRange =
+      previousRectangle.column + previousRectangle.width;
+    for (
+      let column = previousRectangle.column;
+      column < previousColumnRange;
+      ++column
+    ) {
       if (intersection && fitsInRectangle(column, previousRow, intersection)) {
         continue;
       }
@@ -164,7 +186,9 @@ export class TextObject extends DrawObject<"text"> {
       }
     }
 
-    const hasOriginMoved = rectangle.column !== previousRectangle.column || rectangle.row !== previousRectangle.row;
+    const hasOriginMoved =
+      rectangle.column !== previousRectangle.column ||
+      rectangle.row !== previousRectangle.row;
 
     const { row } = rectangle;
     const columnRange = rectangle.column + rectangle.width;
@@ -199,7 +223,10 @@ export class TextObject extends DrawObject<"text"> {
     const viewRectangle = this.view.peek()?.rectangle?.peek();
     if (viewRectangle) {
       rowRange = Math.min(row, viewRectangle.row + viewRectangle.height);
-      columnRange = Math.min(columnRange, viewRectangle.column + viewRectangle.width);
+      columnRange = Math.min(
+        columnRange,
+        viewRectangle.column + viewRectangle.width,
+      );
     }
 
     if (row > rowRange) return;
@@ -212,9 +239,9 @@ export class TextObject extends DrawObject<"text"> {
       return;
     }
 
-    const rowBuffer = frameBuffer[row] ??= [];
+    const rowBuffer = (frameBuffer[row] ??= []);
 
-    const rerenderQueueRow = rerenderQueue[row] ??= new Set();
+    const rerenderQueueRow = (rerenderQueue[row] ??= new Set());
 
     for (const column of rerenderColumns) {
       if (

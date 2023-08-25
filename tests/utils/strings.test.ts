@@ -1,10 +1,30 @@
 // Copyright 2023 Im-Beast. All rights reserved. MIT license.
 
-import { characterWidth, insertAt, stripStyles, textWidth, UNICODE_CHAR_REGEXP } from "../../src/utils/strings.ts";
+import {
+  characterWidth,
+  insertAt,
+  stripStyles,
+  textWidth,
+  UNICODE_CHAR_REGEXP,
+} from "../../src/utils/strings.ts";
 import { assertEquals } from "../deps.ts";
 
 const unicodeString = "♥☭👀f🌏g⚠5✌💢✅💛🌻";
-const fullWidths = ["０", "１", "２", "３", "４", "ｈ", "ｉ", "ｊ", "ｋ", "ｌ", "テ", "ク", "ワ"];
+const fullWidths = [
+  "０",
+  "１",
+  "２",
+  "３",
+  "４",
+  "ｈ",
+  "ｉ",
+  "ｊ",
+  "ｋ",
+  "ｌ",
+  "テ",
+  "ク",
+  "ワ",
+];
 const halfWidths = ["a", "b", "1", "ą", "ł", "､", "ﾝ", "ｼ"];
 
 Deno.test("utils/strings.ts", async (t) => {

@@ -96,8 +96,13 @@ export class Label extends Component {
 
     this.text = signalify(options.text);
     this.overwriteRectangle = signalify(options.overwriteRectangle ?? false);
-    this.multiCodePointSupport = signalify(options.multiCodePointSupport ?? false);
-    this.align = signalify(options.align ?? { vertical: "top", horizontal: "left" }, { deepObserve: true });
+    this.multiCodePointSupport = signalify(
+      options.multiCodePointSupport ?? false,
+    );
+    this.align = signalify(
+      options.align ?? { vertical: "top", horizontal: "left" },
+      { deepObserve: true },
+    );
 
     this.#valueLines = new Computed(() => this.text.value.split("\n"));
 
@@ -107,7 +112,10 @@ export class Label extends Component {
       const valueLines = this.#valueLines.value;
 
       if (!overwriteRectangle) {
-        rectangle.width = valueLines.reduce((p, c) => Math.max(p, textWidth(c)), 0);
+        rectangle.width = valueLines.reduce(
+          (p, c) => Math.max(p, textWidth(c)),
+          0,
+        );
         rectangle.height = valueLines.length;
       }
 
@@ -132,7 +140,11 @@ export class Label extends Component {
 
     const { drawnObjects } = this;
 
-    for (let offset = drawnObjects.texts.length; offset < this.#valueLines.peek().length; ++offset) {
+    for (
+      let offset = drawnObjects.texts.length;
+      offset < this.#valueLines.peek().length;
+      ++offset
+    ) {
       const textRectangle: TextRectangle = { column: 0, row: 0, width: 0 };
       const text = new TextObject({
         canvas: this.tui.canvas,
@@ -189,7 +201,9 @@ export class Label extends Component {
   #popUnusedDrawObjects(): void {
     if (!this.#valueLines) throw new Error("#valueLines has to be set");
 
-    for (const text of this.drawnObjects.texts.splice(this.#valueLines.peek().length)) {
+    for (const text of this.drawnObjects.texts.splice(
+      this.#valueLines.peek().length,
+    )) {
       text.erase();
     }
   }

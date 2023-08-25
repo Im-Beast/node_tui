@@ -27,7 +27,7 @@ export const FrameUnicodeCharacters = {
 };
 
 export type FrameUnicodeCharactersType = {
-  [key in keyof typeof FrameUnicodeCharacters["rounded"]]: string;
+  [key in keyof (typeof FrameUnicodeCharacters)["rounded"]]: string;
 };
 
 export interface FrameOptions extends ComponentOptions {
@@ -80,7 +80,9 @@ export class Frame extends Component {
   constructor(options: FrameOptions) {
     super(options);
     this.charMap = signalify(
-      typeof options.charMap === "string" ? FrameUnicodeCharacters[options.charMap] : options.charMap,
+      typeof options.charMap === "string"
+        ? FrameUnicodeCharacters[options.charMap]
+        : options.charMap,
     );
   }
 
@@ -97,7 +99,9 @@ export class Frame extends Component {
       zIndex: this.zIndex,
       value: new Computed(() => {
         const { topLeft, horizontal, topRight } = this.charMap.value;
-        return topLeft + horizontal.repeat(this.rectangle.value.width) + topRight;
+        return (
+          topLeft + horizontal.repeat(this.rectangle.value.width) + topRight
+        );
       }),
       rectangle: new Computed(() => {
         const { column, row } = this.rectangle.value;
@@ -115,7 +119,11 @@ export class Frame extends Component {
       zIndex: this.zIndex,
       value: new Computed(() => {
         const { bottomLeft, horizontal, bottomRight } = this.charMap.value;
-        return bottomLeft + horizontal.repeat(this.rectangle.value.width) + bottomRight;
+        return (
+          bottomLeft +
+          horizontal.repeat(this.rectangle.value.width) +
+          bottomRight
+        );
       }),
       rectangle: new Computed(() => {
         const { column, row, height } = this.rectangle.value;
@@ -125,7 +133,9 @@ export class Frame extends Component {
       }),
     });
 
-    const verticalCharMapSignal = new Computed(() => this.charMap.value.vertical);
+    const verticalCharMapSignal = new Computed(
+      () => this.charMap.value.vertical,
+    );
 
     const leftRectangle = { column: 0, row: 0, width: 1, height: 0 };
     const left = new BoxObject({

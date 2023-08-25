@@ -36,7 +36,8 @@
   },
   "homepage": "https://github.com/Im-Beast/node_tui#readme",
   "devDependencies": {
-    "crayon.js": "^3.3.3"
+    "crayon.js": "^3.3.3",
+    "prettier": "3.0.2"
   },
   "dependencies": {
     "@deno/shim-deno": "^0.16.1",

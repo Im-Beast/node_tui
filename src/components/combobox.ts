@@ -3,7 +3,8 @@ import { Computed, Signal, SignalOfObject } from "../signals/mod.ts";
 import { signalify } from "../utils/signals.ts";
 import { Button, ButtonOptions } from "./button.ts";
 
-export interface ComboBoxOptions<Items extends string[] = string[]> extends Omit<ButtonOptions, "label"> {
+export interface ComboBoxOptions<Items extends string[] = string[]>
+  extends Omit<ButtonOptions, "label"> {
   placeholder?: string;
   items: Items | SignalOfObject<Items>;
   selectedItem?: number | undefined | Signal<number | undefined>;
@@ -78,7 +79,11 @@ export class ComboBox<Items extends string[] = string[]> extends Button {
     const { subComponents } = this;
     const items = this.items.peek();
 
-    for (let i = 0; i < Math.max(items.length, this.#subComponentsLength); ++i) {
+    for (
+      let i = 0;
+      i < Math.max(items.length, this.#subComponentsLength);
+      ++i
+    ) {
       const subComponent = subComponents[i];
       if (subComponent) {
         if (i >= items.length) {

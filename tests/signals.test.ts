@@ -81,16 +81,22 @@ Deno.test("signals/mod.ts", async (t) => {
     await t.step("Deep observe", async (t) => {
       await t.step("Object", async () => {
         let subCount = 0;
-        const signal = new Signal<Record<string, string>>({ foo: "bar" }, {
-          deepObserve: true,
-        });
+        const signal = new Signal<Record<string, string>>(
+          { foo: "bar" },
+          {
+            deepObserve: true,
+          },
+        );
         signal.subscribe(() => ++subCount);
 
         let subCount2 = 0;
-        const signal2 = new Signal<Record<string, string>>({ foo: "bar" }, {
-          deepObserve: true,
-          watchObjectIndex: true,
-        });
+        const signal2 = new Signal<Record<string, string>>(
+          { foo: "bar" },
+          {
+            deepObserve: true,
+            watchObjectIndex: true,
+          },
+        );
         signal2.subscribe(() => ++subCount2);
 
         const computedObj = { foo: "" };
@@ -225,15 +231,39 @@ Deno.test("signals/mod.ts", async (t) => {
 
         signal.value.set("baz", "bad");
         signal2.value.set("baz", "bad");
-        assertEquals(signal.value, new Map([["foo", "bar"], ["baz", "bad"]]));
-        assertEquals(signal2.value, new Map([["foo", "bar"], ["baz", "bad"]]));
+        assertEquals(
+          signal.value,
+          new Map([
+            ["foo", "bar"],
+            ["baz", "bad"],
+          ]),
+        );
+        assertEquals(
+          signal2.value,
+          new Map([
+            ["foo", "bar"],
+            ["baz", "bad"],
+          ]),
+        );
         assertEquals(subCount, 1);
         assertEquals(subCount2, 1);
 
         signal.value.set("baz", "boop");
         signal2.value.set("baz", "boop");
-        assertEquals(signal.value, new Map([["foo", "bar"], ["baz", "boop"]]));
-        assertEquals(signal2.value, new Map([["foo", "bar"], ["baz", "boop"]]));
+        assertEquals(
+          signal.value,
+          new Map([
+            ["foo", "bar"],
+            ["baz", "boop"],
+          ]),
+        );
+        assertEquals(
+          signal2.value,
+          new Map([
+            ["foo", "bar"],
+            ["baz", "boop"],
+          ]),
+        );
         assertEquals(subCount, 1);
         assertEquals(subCount2, 2);
 
@@ -295,7 +325,7 @@ Deno.test("signals/mod.ts", async (t) => {
     // Computed tracks dependencies for one event loop tick
     await Promise.resolve();
 
-    assertThrows(() => computed.value = 10); // You can't change computed's value directly
+    assertThrows(() => (computed.value = 10)); // You can't change computed's value directly
 
     assertEquals(signal.value, 0);
     assertEquals(computed.value, 0);
@@ -337,8 +367,7 @@ Deno.test("signals/mod.ts", async (t) => {
 
     const effect = new Effect(() => {
       ++runs;
-      effectOutput =
-        `s1:${signal.value}, c1:${computed.value} | s2: ${signal2.value}, c2:${computed2.value} | c3: ${computed3.value}`;
+      effectOutput = `s1:${signal.value}, c1:${computed.value} | s2: ${signal2.value}, c2:${computed2.value} | c3: ${computed3.value}`;
     });
 
     await Promise.resolve();

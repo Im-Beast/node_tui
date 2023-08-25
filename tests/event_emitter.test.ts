@@ -13,9 +13,13 @@ Deno.test("event_emitter.ts", async (t) => {
       passed = true;
     });
 
-    emitter.on("test", () => {
-      ++triage;
-    }, true);
+    emitter.on(
+      "test",
+      () => {
+        ++triage;
+      },
+      true,
+    );
 
     emitter.emit("test");
     emitter.emit("test");

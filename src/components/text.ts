@@ -68,7 +68,9 @@ export class Text extends Component {
     super(options as unknown as ComponentOptions);
     this.text = signalify(options.text);
     this.overwriteRectangle = signalify(options.overwriteWidth ?? false);
-    this.multiCodePointSupport = signalify(options.multiCodePointSupport ?? false);
+    this.multiCodePointSupport = signalify(
+      options.multiCodePointSupport ?? false,
+    );
   }
 
   draw(): void {

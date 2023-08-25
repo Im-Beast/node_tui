@@ -2,7 +2,10 @@
 import { Signal } from "../signals/signal.ts";
 import { signalify } from "../utils/signals.ts";
 
-import { LayoutInvalidElementsPatternError, LayoutMissingElementError } from "./errors.ts";
+import {
+  LayoutInvalidElementsPatternError,
+  LayoutMissingElementError,
+} from "./errors.ts";
 
 import type { Rectangle } from "../types.ts";
 import type { Layout, LayoutElement, LayoutOptions } from "./types.ts";
@@ -102,7 +105,10 @@ export class HorizontalLayout<T extends string> implements Layout<T> {
           elements[i] = {
             name: name,
             unitLength: 0,
-            rectangle: new Signal({ column: 0, height: 0, row: 0, width: 0 }, { deepObserve: true }),
+            rectangle: new Signal(
+              { column: 0, height: 0, row: 0, width: 0 },
+              { deepObserve: true },
+            ),
           };
         }
         key = i++;
@@ -127,8 +133,9 @@ export class HorizontalLayout<T extends string> implements Layout<T> {
     const elementWidth = Math.round(width / totalUnitLength);
 
     let currentColumn = 0;
-    let widthDiff = width - (elementWidth * totalUnitLength) - gapX;
-    let partDiff = (widthDiff < 0 ? 1 : -1) *
+    let widthDiff = width - elementWidth * totalUnitLength - gapX;
+    let partDiff =
+      (widthDiff < 0 ? 1 : -1) *
       Math.ceil(Math.abs(widthDiff) / elements.length);
     for (const i in elements) {
       const element = elements[i];
@@ -137,7 +144,8 @@ export class HorizontalLayout<T extends string> implements Layout<T> {
       rectangle.height = height - gapY * 2;
       rectangle.row = row + gapY;
 
-      const currentElementWidth = (elementWidth - partDiff) * element.unitLength;
+      const currentElementWidth =
+        (elementWidth - partDiff) * element.unitLength;
 
       widthDiff += partDiff;
       if (widthDiff === 0) {

@@ -33,7 +33,9 @@ export interface SignalOptions<T> {
    *  - When set to `true` it creates `Proxy` which watches properties, even new ones.
    *  - When set to `false` it uses `Object.defineProperty` to watch properties that existed at the time of creating signal.
    */
-  watchObjectIndex?: T extends Map<unknown, unknown> | Set<unknown> ? never : boolean;
+  watchObjectIndex?: T extends Map<unknown, unknown> | Set<unknown>
+    ? never
+    : boolean;
   /**
    * @requires T to be `instanceof Map`
    *
@@ -76,14 +78,22 @@ export class Signal<T> implements Dependency {
       } else if (value instanceof Map) {
         value = makeMapMethodsReactive(value, this, options.watchMapUpdates);
       } else {
-        value = makeObjectPropertiesReactive(value, this, options.watchObjectIndex);
+        value = makeObjectPropertiesReactive(
+          value,
+          this,
+          options.watchObjectIndex,
+        );
       }
     }
     this.$value = value;
   }
 
   /** Bind function to signal, it'll be called each time signal's value changes and is equal to {conditionValues} */
-  when(conditionValue: T, subscription: Subscription<T>, abortSignal?: AbortSignal): void {
+  when(
+    conditionValue: T,
+    subscription: Subscription<T>,
+    abortSignal?: AbortSignal,
+  ): void {
     this.whenSubscriptions ??= new Map();
 
     const { whenSubscriptions } = this;

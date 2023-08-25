@@ -61,7 +61,8 @@ export class Component extends EventEmitter<
     this.parent = options.parent;
 
     const { parent } = this;
-    const tui = this.tui = options.tui ?? ("tui" in parent ? parent.tui : parent);
+    const tui = (this.tui =
+      options.tui ?? ("tui" in parent ? parent.tui : parent));
 
     this.parent.children.push(this);
     this.children = new SortedArray();
@@ -76,7 +77,10 @@ export class Component extends EventEmitter<
     this.view = signalify(options.view);
     this.zIndex = signalify(options.zIndex);
     this.visible = signalify(options.visible ?? true);
-    this.rectangle = signalify(options.rectangle, { deepObserve: true, watchObjectIndex: true });
+    this.rectangle = signalify(options.rectangle, {
+      deepObserve: true,
+      watchObjectIndex: true,
+    });
 
     this.visible.subscribe((visible) => {
       if (this.#destroyed) return;

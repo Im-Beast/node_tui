@@ -117,7 +117,8 @@ export class ProgressBar extends Box {
   constructor(options: ProgressBarOptions) {
     super(options);
 
-    const { min, max, value, smooth, direction, orientation, charMap } = options;
+    const { min, max, value, smooth, direction, orientation, charMap } =
+      options;
     this.min = signalify(min);
     this.max = signalify(max);
     this.value = signalify(value);
@@ -141,8 +142,13 @@ export class ProgressBar extends Box {
         zIndex: this.zIndex,
         style: new Computed(() => this.theme.progress[this.state.value]),
         rectangle: new Computed(() => {
-          let normalizedValue = normalize(this.value.value, this.min.value, this.max.value);
-          if (this.direction.value === "reversed") normalizedValue = 1 - normalizedValue;
+          let normalizedValue = normalize(
+            this.value.value,
+            this.min.value,
+            this.max.value,
+          );
+          if (this.direction.value === "reversed")
+            normalizedValue = 1 - normalizedValue;
 
           const { column, row, width, height } = this.rectangle.value;
           progressRectangle.column = column;
@@ -177,9 +183,11 @@ export class ProgressBar extends Box {
   interact(method: "mouse" | "keyboard"): void {
     const interactionInterval = Date.now() - this.lastInteraction.time;
 
-    this.state.value = this.state.peek() === "focused" && (interactionInterval < 500 || method === "keyboard")
-      ? "active"
-      : "focused";
+    this.state.value =
+      this.state.peek() === "focused" &&
+      (interactionInterval < 500 || method === "keyboard")
+        ? "active"
+        : "focused";
 
     super.interact(method);
   }
@@ -189,7 +197,11 @@ export class ProgressBar extends Box {
       throw new Error("drawnObjects.progress needs to be an array");
     }
 
-    for (let offset = this.drawnObjects.progress.length; offset < this.rectangle.peek().height; ++offset) {
+    for (
+      let offset = this.drawnObjects.progress.length;
+      offset < this.rectangle.peek().height;
+      ++offset
+    ) {
       const progressLineRectangle = { column: 0, row: 0 };
       const progressLine = new TextObject({
         canvas: this.tui.canvas,
@@ -204,21 +216,30 @@ export class ProgressBar extends Box {
           return progressLineRectangle;
         }),
         value: new Computed(() => {
-          let normalizedValue = normalize(this.value.value, this.min.value, this.max.value);
-          if (this.direction.value === "reversed") normalizedValue = 1 - normalizedValue;
+          let normalizedValue = normalize(
+            this.value.value,
+            this.min.value,
+            this.max.value,
+          );
+          if (this.direction.value === "reversed")
+            normalizedValue = 1 - normalizedValue;
 
           const charMap = this.charMap.value[this.orientation.value];
-          const step = 1 / (charMap.length);
+          const step = 1 / charMap.length;
 
           const { width, height } = this.rectangle.value;
 
           if (this.orientation.value === "horizontal") {
             const steps = normalizedValue * width;
             const remainder = steps % 1;
-            return charMap[0].repeat(steps) +
-              (
-                remainder < step ? "" : charMap[charMap.length - Math.max(Math.round(remainder / step), 1)]
-              );
+            return (
+              charMap[0].repeat(steps) +
+              (remainder < step
+                ? ""
+                : charMap[
+                    charMap.length - Math.max(Math.round(remainder / step), 1)
+                  ])
+            );
           } else {
             const steps = normalizedValue * height;
 
@@ -231,7 +252,9 @@ export class ProgressBar extends Box {
             } else {
               return remainder < step
                 ? ""
-                : charMap[charMap.length - Math.max(Math.round(remainder / step), 1)].repeat(width);
+                : charMap[
+                    charMap.length - Math.max(Math.round(remainder / step), 1)
+                  ].repeat(width);
             }
           }
         }),
@@ -247,7 +270,9 @@ export class ProgressBar extends Box {
       throw new Error("drawnObjects.progress needs to be an array");
     }
 
-    for (const progressLine of this.drawnObjects.progress.splice(this.rectangle.peek().height)) {
+    for (const progressLine of this.drawnObjects.progress.splice(
+      this.rectangle.peek().height,
+    )) {
       progressLine.erase();
     }
   }

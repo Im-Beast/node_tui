@@ -47,7 +47,9 @@ export class Canvas extends EventEmitter<CanvasEventMap> {
     this.frameBuffer = [];
     this.rerenderQueue = [];
     this.stdout = options.stdout;
-    this.drawnObjects = new SortedArray((a, b) => a.zIndex.peek() - b.zIndex.peek() || a.id - b.id);
+    this.drawnObjects = new SortedArray(
+      (a, b) => a.zIndex.peek() - b.zIndex.peek() || a.id - b.id,
+    );
     this.updateObjects = [];
     this.resizeNeeded = false;
 
@@ -95,14 +97,18 @@ export class Canvas extends EventEmitter<CanvasEventMap> {
         continue;
       }
 
-      const intersection = rectangleIntersection(rectangle, object2.rectangle.peek(), true);
+      const intersection = rectangleIntersection(
+        rectangle,
+        object2.rectangle.peek(),
+        true,
+      );
 
       if (!intersection) continue;
 
       const rowRange = intersection.row + intersection.height;
       const columnRange = intersection.column + intersection.width;
       for (let row = intersection.row; row < rowRange; ++row) {
-        const omitColumns = omitCells[row] ??= new Set();
+        const omitColumns = (omitCells[row] ??= new Set());
 
         for (let column = intersection.column; column < columnRange; ++column) {
           omitColumns.add(column);
@@ -124,7 +130,9 @@ export class Canvas extends EventEmitter<CanvasEventMap> {
     }
 
     let i = 0;
-    updateObjects.sort((a, b) => b.zIndex.peek() - a.zIndex.peek() || b.id - a.id);
+    updateObjects.sort(
+      (a, b) => b.zIndex.peek() - a.zIndex.peek() || b.id - a.id,
+    );
 
     for (const object of updateObjects) {
       if (object.updated) continue;
@@ -171,7 +179,7 @@ export class Canvas extends EventEmitter<CanvasEventMap> {
       const columns = rerenderQueue[row];
       if (!columns?.size) continue;
 
-      const rowBuffer = frameBuffer[row] ??= [];
+      const rowBuffer = (frameBuffer[row] ??= []);
 
       for (const column of columns) {
         if (row !== lastRow || column !== lastColumn + 1) {
@@ -182,7 +190,9 @@ export class Canvas extends EventEmitter<CanvasEventMap> {
 
         // This is required to render properly on windows
         if (drawSequence.length + cell.length > 1024) {
-          stdout.writeSync(textEncoder.encode(moveCursor(lastRow, lastColumn) + drawSequence));
+          stdout.writeSync(
+            textEncoder.encode(moveCursor(lastRow, lastColumn) + drawSequence),
+          );
           drawSequence = moveCursor(row, column);
         }
 
@@ -196,7 +206,9 @@ export class Canvas extends EventEmitter<CanvasEventMap> {
     }
 
     // Complete final loop draw sequence
-    stdout.writeSync(textEncoder.encode(moveCursor(lastRow, lastColumn) + drawSequence));
+    stdout.writeSync(
+      textEncoder.encode(moveCursor(lastRow, lastColumn) + drawSequence),
+    );
 
     this.emit("render");
   }

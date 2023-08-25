@@ -15,7 +15,9 @@ export function isReactive<T extends object>(input: T): input is Reactive<T> {
   return IS_REACTIVE in input;
 }
 
-export function getConnectedSignal<T extends object>(input: T | Reactive<T>): Signal<T> {
+export function getConnectedSignal<T extends object>(
+  input: T | Reactive<T>,
+): Signal<T> {
   if (isReactive(input)) {
     return input[CONNECTED_SIGNAL];
   }
@@ -116,7 +118,10 @@ export function makeMapMethodsReactive<T extends Map<unknown, unknown>, S>(
  *
  * When set gets in any way updated `propagate` method gets called on provided signal.
  */
-export function makeSetMethodsReactive<T extends Set<unknown>, S>(set: T, signal: Signal<S>): T {
+export function makeSetMethodsReactive<T extends Set<unknown>, S>(
+  set: T,
+  signal: Signal<S>,
+): T {
   Object.defineProperties(set, {
     [IS_REACTIVE]: { value: true },
     [ORIGINAL_REF]: { value: set },
@@ -248,7 +253,11 @@ export function makeArrayMethodsReactive<T extends Array<unknown>, S>(
  *
  * @returns new object, not direct reference to given object
  */
-export function makeObjectPropertiesReactive<T, S>(object: T, signal: Signal<S>, watchObjectIndex = false): T {
+export function makeObjectPropertiesReactive<T, S>(
+  object: T,
+  signal: Signal<S>,
+  watchObjectIndex = false,
+): T {
   if (typeof object !== "object") {
     throw new Error("parameter object needs to be typeof 'object'");
   }

@@ -44,7 +44,9 @@ export class CheckBox extends Button {
 
     Object.assign(options, {
       label: {
-        text: new Computed(() => checkedSignal.value ? Mark.Check : Mark.Cross),
+        text: new Computed(() =>
+          checkedSignal.value ? Mark.Check : Mark.Cross,
+        ),
       },
     });
 
@@ -54,6 +56,7 @@ export class CheckBox extends Button {
 
   interact(method: "mouse" | "keyboard"): void {
     super.interact(method);
-    if (this.state.peek() === "active") this.checked.value = !this.checked.peek();
+    if (this.state.peek() === "active")
+      this.checked.value = !this.checked.peek();
   }
 }

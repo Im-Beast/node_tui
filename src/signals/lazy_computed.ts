@@ -48,7 +48,10 @@ export class LazyComputed<T> extends Computed<T> implements LazyDependant {
   constructor(computable: Computable<T>, interval: number);
   constructor(computable: Computable<T>, flusher: Flusher);
   constructor(computable: Computable<T>, options: LazyComputedOptions);
-  constructor(computable: Computable<T>, option: LazyComputedOptions | number | Flusher) {
+  constructor(
+    computable: Computable<T>,
+    option: LazyComputedOptions | number | Flusher,
+  ) {
     super(computable);
 
     if (option instanceof Flusher) {

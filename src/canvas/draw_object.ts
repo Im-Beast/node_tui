@@ -1,5 +1,9 @@
 // Copyright 2023 Im-Beast. All rights reserved. MIT license.
-import { fitsInRectangle, rectangleEquals, rectangleIntersection } from "../utils/numbers.ts";
+import {
+  fitsInRectangle,
+  rectangleEquals,
+  rectangleIntersection,
+} from "../utils/numbers.ts";
 
 // FIXME: rename to painters, drawobjects sounds cringe
 
@@ -106,7 +110,8 @@ export class DrawObject<Type extends string = string> {
             if (!rectangle) return;
             const { viewOffset } = this;
 
-            rectangle.column += viewRectangle.column - offset.columns - viewOffset.columns;
+            rectangle.column +=
+              viewRectangle.column - offset.columns - viewOffset.columns;
             rectangle.row += viewRectangle.row - offset.rows - viewOffset.rows;
 
             viewOffset.columns = viewRectangle.column - offset.columns;
@@ -190,11 +195,13 @@ export class DrawObject<Type extends string = string> {
     if (row >= rows || column >= columns) return;
 
     if (
-      viewRectangle && (
-        row < viewRectangle.row || column < viewRectangle.column ||
-        row >= viewRectangle.row + viewRectangle.height || column >= viewRectangle.column + viewRectangle.width
-      )
-    ) return;
+      viewRectangle &&
+      (row < viewRectangle.row ||
+        column < viewRectangle.column ||
+        row >= viewRectangle.row + viewRectangle.height ||
+        column >= viewRectangle.column + viewRectangle.width)
+    )
+      return;
 
     (this.rerenderCells[row] ??= new Set()).add(column);
   }
@@ -218,12 +225,18 @@ export class DrawObject<Type extends string = string> {
     const rectangle = this.rectangle.peek();
 
     // Rerender cells that changed because objects position changed
-    if (!previousRectangle || rectangleEquals(rectangle, previousRectangle)) return;
+    if (!previousRectangle || rectangleEquals(rectangle, previousRectangle))
+      return;
 
-    const intersection = rectangleIntersection(rectangle, previousRectangle, true);
+    const intersection = rectangleIntersection(
+      rectangle,
+      previousRectangle,
+      true,
+    );
 
     const previousRowRange = previousRectangle.row + previousRectangle.height;
-    const previousColumnRange = previousRectangle.column + previousRectangle.width;
+    const previousColumnRange =
+      previousRectangle.column + previousRectangle.width;
     for (let r = previousRectangle.row; r < previousRowRange; ++r) {
       for (let c = previousRectangle.column; c < previousColumnRange; ++c) {
         if (intersection && fitsInRectangle(c, r, intersection)) {
@@ -253,9 +266,13 @@ export class DrawObject<Type extends string = string> {
     const { columns, rows } = this.canvas.size.peek();
     const { column, row, width, height } = this.rectangle.peek();
 
-    this.outOfBounds = width === 0 || height === 0 ||
-      column >= columns || row >= rows ||
-      column + width < 0 || row + height < 0;
+    this.outOfBounds =
+      width === 0 ||
+      height === 0 ||
+      column >= columns ||
+      row >= rows ||
+      column + width < 0 ||
+      row + height < 0;
 
     if (!this.outOfBounds) {
       const viewRectangle = this.view.peek()?.rectangle?.peek();
@@ -264,15 +281,15 @@ export class DrawObject<Type extends string = string> {
       if (
         column > viewRectangle.column + viewRectangle.width ||
         row > viewRectangle.row + viewRectangle.height ||
-        column + width < viewRectangle.column || row + height < viewRectangle.row
+        column + width < viewRectangle.column ||
+        row + height < viewRectangle.row
       ) {
         this.outOfBounds = true;
       }
     }
   }
 
-  update(): void {
-  }
+  update(): void {}
 
   render(): void {
     const { column, row, width, height } = this.rectangle.peek();

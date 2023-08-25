@@ -45,7 +45,10 @@ export class LazyEffect extends Effect implements LazyDependant {
   constructor(effectable: Effectable, interval: number);
   constructor(effectable: Effectable, flusher: Flusher);
   constructor(effectable: Effectable, options: LazyEffectOptions);
-  constructor(effectable: Effectable, option: LazyEffectOptions | number | Flusher) {
+  constructor(
+    effectable: Effectable,
+    option: LazyEffectOptions | number | Flusher,
+  ) {
     super(effectable);
 
     if (option instanceof Flusher) {

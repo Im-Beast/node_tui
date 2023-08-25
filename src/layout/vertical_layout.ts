@@ -3,7 +3,10 @@ import { Signal } from "../signals/signal.ts";
 import { Effect } from "../signals/effect.ts";
 import { signalify } from "../utils/signals.ts";
 
-import { LayoutInvalidElementsPatternError, LayoutMissingElementError } from "./errors.ts";
+import {
+  LayoutInvalidElementsPatternError,
+  LayoutMissingElementError,
+} from "./errors.ts";
 
 import type { Rectangle } from "../types.ts";
 import type { Layout, LayoutElement, LayoutOptions } from "./types.ts";
@@ -102,7 +105,10 @@ export class VerticalLayout<T extends string> implements Layout<T> {
           elements[i] = {
             name: name,
             unitLength: 0,
-            rectangle: new Signal({ column: 0, height: 0, row: 0, width: 0 }, { deepObserve: true }),
+            rectangle: new Signal(
+              { column: 0, height: 0, row: 0, width: 0 },
+              { deepObserve: true },
+            ),
           };
         }
         key = i++;
@@ -127,8 +133,10 @@ export class VerticalLayout<T extends string> implements Layout<T> {
     const elementHeight = Math.round(height / totalUnitLength);
 
     let currentRow = 0;
-    let heightDiff = height - (elementHeight * totalUnitLength) - gapY;
-    let partDiff = (heightDiff < 0 ? 1 : -1) * Math.ceil(Math.abs(heightDiff) / elements.length);
+    let heightDiff = height - elementHeight * totalUnitLength - gapY;
+    let partDiff =
+      (heightDiff < 0 ? 1 : -1) *
+      Math.ceil(Math.abs(heightDiff) / elements.length);
     for (const i in elements) {
       const element = elements[i];
       const rectangle = element.rectangle.peek();
@@ -136,7 +144,8 @@ export class VerticalLayout<T extends string> implements Layout<T> {
       rectangle.width = width - gapX * 2;
       rectangle.column = column + gapX;
 
-      const currentElementHeight = (elementHeight - partDiff) * element.unitLength;
+      const currentElementHeight =
+        (elementHeight - partDiff) * element.unitLength;
 
       heightDiff += partDiff;
       if (heightDiff === 0) {

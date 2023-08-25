@@ -9,7 +9,10 @@ export function isInteractable(component: Component): boolean {
 }
 
 /** Returns component that's the closest to top left corner of tui's canvas */
-export function getComponentClosestToTopLeftCorner(tui: Tui, filterFn?: (component: Component) => boolean): Component {
+export function getComponentClosestToTopLeftCorner(
+  tui: Tui,
+  filterFn?: (component: Component) => boolean,
+): Component {
   let closestDistance!: number;
   let closestComponent!: Component;
 
@@ -21,12 +24,13 @@ export function getComponentClosestToTopLeftCorner(tui: Tui, filterFn?: (compone
       continue;
     }
 
-    const distance = (
-      (0 - rectangle.row) ** 2 +
-      (0 - rectangle.column) ** 2
-    ) ** 0.5;
+    const distance =
+      ((0 - rectangle.row) ** 2 + (0 - rectangle.column) ** 2) ** 0.5;
 
-    if (!closestComponent || (distance < closestDistance && zIndex > closestComponent.zIndex.peek())) {
+    if (
+      !closestComponent ||
+      (distance < closestDistance && zIndex > closestComponent.zIndex.peek())
+    ) {
       closestDistance = distance;
       closestComponent = component;
       if (distance === 0) break;

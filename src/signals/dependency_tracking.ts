@@ -33,7 +33,10 @@ export async function trackDependencies(
 /**
  * Replaces all dependencies with root dependencies to prevent multiple updates caused by the same change.
  */
-export function optimizeDependencies(into: Set<Dependency | (Dependency & Dependant)>, from = into): void {
+export function optimizeDependencies(
+  into: Set<Dependency | (Dependency & Dependant)>,
+  from = into,
+): void {
   for (const dependency of from) {
     if ("dependencies" in dependency) {
       into.delete(dependency);

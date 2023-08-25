@@ -71,7 +71,7 @@ export function cropToWidth(text: string, width: number): string {
   do {
     const index = text.lastIndexOf(letter);
     text = text.slice(0, index);
-  } while ((knownWidth + textWidth(text, start)) > width);
+  } while (knownWidth + textWidth(text, start) > width);
   return text;
 }
 
@@ -83,7 +83,7 @@ export function cropToWidth(text: string, width: number): string {
 export function characterWidth(character: string): number {
   const codePoint = character.charCodeAt(0);
 
-  if (codePoint === 0xD83E || codePoint === 0x200B) {
+  if (codePoint === 0xd83e || codePoint === 0x200b) {
     return 0;
   }
 

@@ -76,9 +76,11 @@ export class Button extends Box {
   interact(method: "mouse" | "keyboard"): void {
     const interactionInterval = Date.now() - this.lastInteraction.time;
 
-    this.state.value = this.state.peek() === "focused" && (interactionInterval < 500 || method === "keyboard")
-      ? "active"
-      : "focused";
+    this.state.value =
+      this.state.peek() === "focused" &&
+      (interactionInterval < 500 || method === "keyboard")
+        ? "active"
+        : "focused";
 
     super.interact(method);
   }
