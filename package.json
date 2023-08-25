@@ -13,7 +13,8 @@
     "test": "tests"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "demo": "tsx examples/demo.ts",
+    "test": "ava"
   },
   "repository": {
     "type": "git",
@@ -37,9 +38,20 @@
   "homepage": "https://github.com/Im-Beast/node_tui#readme",
   "devDependencies": {
     "crayon.js": "^3.3.3",
-    "prettier": "3.0.2"
+    "prettier": "3.0.2",
+    "tsx": "^3.12.7"
   },
   "dependencies": {
-    "@types/node": "^20.5.6"
+    "@types/node": "^20.5.6",
+    "ava": "^5.3.1"
+  },
+  "ava": {
+    "extensions": [
+      "ts",
+      "js"
+    ],
+    "nodeArguments": [
+      "--loader=tsx"
+    ]
   }
 }
