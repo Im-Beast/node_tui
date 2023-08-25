@@ -51,7 +51,6 @@ type _Range<
 export type DeepPartial<Object, OmitKeys extends keyof Object = never> =
   & {
     [key in Exclude<keyof Object, OmitKeys>]?: Object[key] extends object
-      // deno-lint-ignore ban-types
       ? Object[key] extends Function ? Object[key]
       : DeepPartial<Object[key]>
       : Object[key];

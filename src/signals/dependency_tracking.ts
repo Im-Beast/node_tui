@@ -11,7 +11,6 @@ export async function trackDependencies(
   dependencies: Set<Dependency>,
   thisArg: unknown,
   // this is supposed to mean every function
-  // deno-lint-ignore ban-types
   func: Function,
 ): Promise<void> {
   while (incoming !== 0) {

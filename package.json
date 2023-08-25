@@ -27,8 +27,7 @@
     "terminal",
     "ts",
     "js",
-    "node",
-    "deno"
+    "node"
   ],
   "author": "Im-Beast",
   "license": "BEL",

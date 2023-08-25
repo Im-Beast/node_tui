@@ -274,7 +274,6 @@ export function makeObjectPropertiesReactive<T, S>(
   }
 
   if (watchObjectIndex) {
-    // deno-lint-ignore no-explicit-any
     const proxyHandler: ProxyHandler<any> = {
       set(target, property, value) {
         if (target[property] !== (target[property] = value)) {
