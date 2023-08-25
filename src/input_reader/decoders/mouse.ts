@@ -156,12 +156,9 @@ export function decodeMouseVT_UTF8(
   const shift = !!(modifiers & 4);
   const meta = !!(modifiers & 8);
   const ctrl = !!(modifiers & 16);
-  const scroll =
-    button && !!(modifiers & 32) && !!(modifiers & 64)
-      ? modifiers & 3
-        ? 1
-        : -1
-      : 0;
+  const scroll = button && !!(modifiers & 32) && !!(modifiers & 64)
+    ? (modifiers & 3 ? 1 : -1)
+    : 0;
   if (scroll) button = undefined;
   const drag = !scroll && !!(modifiers & 64);
 

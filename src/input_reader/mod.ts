@@ -1,5 +1,7 @@
 // Copyright 2023 Im-Beast. All rights reserved. MIT license.
 
+import { createInterface } from "node:readline";
+
 import type {
   KeyPressEvent,
   MouseEvent,
@@ -26,17 +28,11 @@ export async function emitInputEvents(
   emitter: EventEmitter<InputEventRecord>,
   minReadInterval = 1000 / 60,
 ) {
-  try {
-    stdin.setRaw(true, { cbreak: Deno.build.os !== "windows" });
-  } catch {
-    // omit
-  }
+  stdin.setRawMode(true);
 
   const maxbuffer = new Uint8Array(1024);
-  async function read() {
-    const size = await stdin.read(maxbuffer);
-    const buffer = maxbuffer.subarray(0, size ?? 0);
 
+  stdin.on("data", (buffer) => {
     for (const event of decodeBuffer(buffer)) {
       if (event.key === "mouse") {
         emitter.emit("mouseEvent", event);
@@ -50,10 +46,7 @@ export async function emitInputEvents(
         emitter.emit("keyPress", event);
       }
     }
-
-    setTimeout(read, minReadInterval);
-  }
-  await read();
+  });
 }
 
 const textDecoder = new TextDecoder();
@@ -63,7 +56,7 @@ const textDecoder = new TextDecoder();
  * @see https://invisible-island.net/xterm/ctlseqs/ctlseqs.txt for reference used to create this function
  */
 export function* decodeBuffer(
-  buffer: Uint8Array,
+  buffer: Buffer,
 ): Generator<
   KeyPressEvent | MouseEvent | MousePressEvent | MouseScrollEvent,
   void,

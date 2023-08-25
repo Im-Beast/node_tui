@@ -5,7 +5,7 @@ import type { Alphabet, Key, KeyPressEvent } from "../types.ts";
 const lowerCaseAlphabet = "abcdefghijklmnopqrstuvwxyz";
 
 const keyPress: KeyPressEvent = {
-  buffer: undefined as unknown as Uint8Array,
+  buffer: undefined as unknown as Buffer,
   key: "-",
   meta: false,
   ctrl: false,
@@ -78,9 +78,7 @@ export function decodeKey(buffer: Uint8Array, code: string): KeyPressEvent {
             break;
         }
 
-        code = code
-          .replace(`1;${modifier}`, "")
-          .replace(`;${modifier}`, "")
+        code = code.replace(`1;${modifier}`, "").replace(`;${modifier}`, "")
           .replace("1;", "");
         switch (code) {
           case "OP":
